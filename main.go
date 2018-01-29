@@ -3,13 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
+
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 var AwsCredentials []AwsCredential
@@ -88,10 +89,38 @@ func parseAwsCredentials() ([]AwsCredential, error) {
 	return awsCres, nil
 }
 
-func main() {
+func list(c *cli.Context) error {
 	AwsCredentials, err := parseAwsCredentials()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	fmt.Println(AwsCredentials)
+
+	if len(AwsCredentials) == 0 {
+		fmt.Println("No AWS credentials found.")
+		return nil
+	}
+
+	for _, awsCre := range AwsCredentials {
+		fmt.Println(awsCre.Profile)
+	}
+
+	return nil
+}
+
+func main() {
+	app := cli.NewApp()
+	app.Name = "akm"
+	app.Usage = "A simple AWS access keys manager"
+	app.Author = "Shuichi Ohsawa"
+	app.Email = "ohsawa0515@gmail.com"
+	app.Version = "0.1.0"
+	app.Commands = []cli.Command{
+		{
+			Name:    "ls",
+			Aliases: []string{"l"},
+			Usage:   "List all AWS credentials profile.",
+			Action:  list,
+		},
+	}
+	app.Run(os.Args)
 }
