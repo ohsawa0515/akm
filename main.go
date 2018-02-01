@@ -1,22 +1,23 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
-	"regexp"
 	"runtime"
-	"strings"
 
+	"github.com/go-ini/ini"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
 type AwsCredential struct {
 	AccessKeyId     string
 	SecretAccessKey string
+	Region          string
 }
+
+type AwsCredentials map[string]*AwsCredential
 
 func getHomeDir() string {
 	usr, err := user.Current()
@@ -29,55 +30,41 @@ func getHomeDir() string {
 	return os.Getenv("HOME")
 }
 
-func parseAwsCredentials() (map[string]*AwsCredential, error) {
-	awsConfigurePath := filepath.Join(getHomeDir(), ".aws")
-	awsCredentialsPath := filepath.Join(awsConfigurePath, "credentials")
-	f, err := os.Open(awsCredentialsPath)
+func getAwsCredentialsPath() string {
+	return filepath.Join(getHomeDir(), ".aws", "credentials")
+}
+
+func getAwsConfigPath() string {
+	return filepath.Join(getHomeDir(), ".aws", "config")
+}
+
+func parseAwsCredentials() (AwsCredentials, error) {
+
+	awsCredentials := make(AwsCredentials)
+
+	// Credentials file
+	cre, err := ini.Load(getAwsCredentialsPath())
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	cre.BlockMode = false
 
-	reAccessKeyId := regexp.MustCompile(`aws_access_key_id\s*?=\s*?(\w.*)`)
-	reSecretAccessKey := regexp.MustCompile(`aws_secret_access_key\s*?=\s*?(\w.*)`)
-	awsCredentials := make(map[string]*AwsCredential)
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-
-		// Skip blank line
-		if len(line) == 0 {
+	for _, section := range cre.Sections() {
+		awsCre := &AwsCredential{}
+		profile := section.Name()
+		if profile == "DEFAULT" {
 			continue
 		}
-
-		// Skip comment out
-		if strings.HasPrefix(line, "#") {
-			continue
+		awsAccessKeyId, err := section.GetKey("aws_access_key_id")
+		if err == nil {
+			awsCre.AccessKeyId = awsAccessKeyId.String()
 		}
 
-		if strings.HasPrefix(line, "[") {
-			tmp := strings.Trim(line, "[")
-			profile := strings.Trim(tmp, "]")
-			awsCre := &AwsCredential{}
-
-			scanner.Scan()
-			line := strings.TrimSpace(scanner.Text())
-			if strings.HasPrefix(line, "aws_access_key_id") {
-				matches := reAccessKeyId.FindStringSubmatch(line)
-				awsCre.AccessKeyId = matches[1]
-			}
-
-			scanner.Scan()
-			line = strings.TrimSpace(scanner.Text())
-			if strings.HasPrefix(line, "aws_secret_access_key") {
-				matches := reSecretAccessKey.FindStringSubmatch(line)
-				awsCre.SecretAccessKey = matches[1]
-			}
-
-			awsCredentials[profile] = awsCre
-
+		awsSecretAccessKey, err := section.GetKey("aws_secret_access_key")
+		if err == nil {
+			awsCre.SecretAccessKey = awsSecretAccessKey.String()
 		}
+		awsCredentials[profile] = awsCre
 	}
 
 	return awsCredentials, nil

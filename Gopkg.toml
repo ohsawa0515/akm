@@ -32,3 +32,11 @@
 [[constraint]]
   name = "gopkg.in/urfave/cli.v1"
   version = "1.20.0"
+
+[[constraint]]
+  name = "gopkg.in/ini.v1"
+  version = "1.32.0"
+
+[[constraint]]
+  name = "github.com/go-ini/ini"
+  version = "1.32.0"
