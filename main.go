@@ -13,12 +13,7 @@ import (
 	cli "gopkg.in/urfave/cli.v1"
 )
 
-var AwsCredentials []AwsCredential
-
-const Secret = "****"
-
 type AwsCredential struct {
-	Profile         string
 	AccessKeyId     string
 	SecretAccessKey string
 }
@@ -34,7 +29,7 @@ func getHomeDir() string {
 	return os.Getenv("HOME")
 }
 
-func parseAwsCredentials() ([]AwsCredential, error) {
+func parseAwsCredentials() (map[string]*AwsCredential, error) {
 	awsConfigurePath := filepath.Join(getHomeDir(), ".aws")
 	awsCredentialsPath := filepath.Join(awsConfigurePath, "credentials")
 	f, err := os.Open(awsCredentialsPath)
@@ -45,7 +40,7 @@ func parseAwsCredentials() ([]AwsCredential, error) {
 
 	reAccessKeyId := regexp.MustCompile(`aws_access_key_id\s*?=\s*?(\w.*)`)
 	reSecretAccessKey := regexp.MustCompile(`aws_secret_access_key\s*?=\s*?(\w.*)`)
-	var awsCres []AwsCredential
+	awsCredentials := make(map[string]*AwsCredential)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -64,9 +59,7 @@ func parseAwsCredentials() ([]AwsCredential, error) {
 		if strings.HasPrefix(line, "[") {
 			tmp := strings.Trim(line, "[")
 			profile := strings.Trim(tmp, "]")
-			awsCre := AwsCredential{
-				Profile: profile,
-			}
+			awsCre := &AwsCredential{}
 
 			scanner.Scan()
 			line := strings.TrimSpace(scanner.Text())
@@ -82,11 +75,12 @@ func parseAwsCredentials() ([]AwsCredential, error) {
 				awsCre.SecretAccessKey = matches[1]
 			}
 
-			awsCres = append(awsCres, awsCre)
+			awsCredentials[profile] = awsCre
+
 		}
 	}
 
-	return awsCres, nil
+	return awsCredentials, nil
 }
 
 func list(c *cli.Context) error {
@@ -100,8 +94,41 @@ func list(c *cli.Context) error {
 		return nil
 	}
 
-	for _, awsCre := range AwsCredentials {
-		fmt.Println(awsCre.Profile)
+	for profile := range AwsCredentials {
+		fmt.Println(profile)
+	}
+
+	return nil
+}
+
+func use(c *cli.Context) error {
+	awsCredentials, err := parseAwsCredentials()
+	if err != nil {
+		return err
+	}
+
+	if len(awsCredentials) == 0 {
+		fmt.Println("No AWS credentials found.")
+		return nil
+	}
+
+	if c.NArg() > 0 {
+		profile := c.Args().Get(0)
+
+		_, ok := awsCredentials[profile]
+		if !ok {
+			fmt.Printf("Profile: %s doesn't exists\n", profile)
+			return nil
+		}
+
+		out := ""
+		out += fmt.Sprintf("export AWS_ACCESS_KEY_ID='%s';", awsCredentials[profile].AccessKeyId)
+		out += fmt.Sprintf("export AWS_SECRET_ACCESS_KEY='%s';", awsCredentials[profile].SecretAccessKey)
+		fmt.Println(out)
+
+	} else {
+		fmt.Println("Select a profile")
+		return nil
 	}
 
 	return nil
@@ -118,8 +145,14 @@ func main() {
 		{
 			Name:    "ls",
 			Aliases: []string{"l"},
-			Usage:   "List all AWS credentials profile.",
+			Usage:   "List all AWS credentials profile",
 			Action:  list,
+		},
+		{
+			Name:    "use",
+			Aliases: []string{"u"},
+			Usage:   "Set specific AWS credential in environment values",
+			Action:  use,
 		},
 	}
 	app.Run(os.Args)
