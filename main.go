@@ -6,6 +6,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/go-ini/ini"
 	cli "gopkg.in/urfave/cli.v1"
@@ -65,6 +66,27 @@ func parseAwsCredentials() (AwsCredentials, error) {
 			awsCre.SecretAccessKey = awsSecretAccessKey.String()
 		}
 		awsCredentials[profile] = awsCre
+	}
+
+	// Config file
+	config, err := ini.Load(getAwsConfigPath())
+	if err != nil {
+		return nil, err
+	}
+	config.BlockMode = false
+
+	for _, section := range config.Sections() {
+		profile := strings.Replace(section.Name(), "profile ", "", -1)
+		if profile == "DEFAULT" {
+			continue
+		}
+		if _, ok := awsCredentials[profile]; !ok {
+			continue
+		}
+		region, err := section.GetKey("region")
+		if err == nil {
+			awsCredentials[profile].Region = region.String()
+		}
 	}
 
 	return awsCredentials, nil
