@@ -8,6 +8,12 @@
   version = "v1.32.0"
 
 [[projects]]
+  name = "github.com/mattn/go-shellwords"
+  packages = ["."]
+  revision = "02e3cf038dcea8290e44424da473dd12be796a8a"
+  version = "v1.0.3"
+
+[[projects]]
   name = "gopkg.in/urfave/cli.v1"
   packages = ["."]
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
@@ -16,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "36787c40c31bcbf6b433e82ac659734e3b5370c68ac562cc4b231a79c8411dc1"
+  inputs-digest = "8d9aa488895c497d90ad70531710f411771d8ecf578a6ac83c684170ee9e5862"
   solver-name = "gps-cdcl"
   solver-version = 1
