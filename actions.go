@@ -5,23 +5,40 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
+	"runtime"
 
 	shellwords "github.com/mattn/go-shellwords"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
+func getHomeDir() string {
+	usr, err := user.Current()
+	if err != nil || len(usr.HomeDir) > 0 {
+		return usr.HomeDir
+	}
+	if runtime.GOOS == "windows" {
+		return os.Getenv("HOMEPATH")
+	}
+	return os.Getenv("HOME")
+}
+
+func getAwsCredentialsPath() string {
+	return filepath.Join(getHomeDir(), ".aws", "credentials")
+}
+
+func getAwsConfigPath() string {
+	return filepath.Join(getHomeDir(), ".aws", "config")
+}
+
 func list(c *cli.Context) error {
-	AwsCredentials, err := parseAwsCredentials()
+	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
-		return err
+		return cli.NewExitError(err, 1)
 	}
 
-	if len(AwsCredentials) == 0 {
-		fmt.Println("No AWS credentials found.")
-		return nil
-	}
-
-	for profile := range AwsCredentials {
+	for profile := range ac {
 		fmt.Println(profile)
 	}
 
@@ -29,48 +46,42 @@ func list(c *cli.Context) error {
 }
 
 func use(c *cli.Context) error {
-	awsCredentials, err := parseAwsCredentials()
+	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
-		return err
-	}
-
-	if len(awsCredentials) == 0 {
-		fmt.Println("No AWS credentials found.")
-		return nil
+		return cli.NewExitError(err, 1)
 	}
 
 	if c.NArg() == 0 {
-		fmt.Println("Select a profile")
-		return nil
+		return cli.NewExitError("Select a profile", 2)
 	}
 
 	profile := c.Args().Get(0)
-	_, ok := awsCredentials[profile]
+	_, ok := ac[profile]
 	if !ok {
-		return fmt.Errorf("Profile: %s doesn't exists\n", profile)
+		return cli.NewExitError(fmt.Sprintf("profile: %s doesn't exist", profile), 1)
 	}
 
 	if c.NArg() == 1 {
 		var buf bytes.Buffer
-		if len(awsCredentials[profile].AccessKeyId) > 0 {
-			buf.WriteString(fmt.Sprintf("export AWS_ACCESS_KEY_ID='%s';", awsCredentials[profile].AccessKeyId))
+		if len(ac[profile].AccessKeyId) > 0 {
+			buf.WriteString(fmt.Sprintf("export AWS_ACCESS_KEY_ID='%s';", ac[profile].AccessKeyId))
 		}
-		if len(awsCredentials[profile].SecretAccessKey) > 0 {
-			buf.WriteString(fmt.Sprintf("export AWS_SECRET_ACCESS_KEY='%s';", awsCredentials[profile].SecretAccessKey))
+		if len(ac[profile].SecretAccessKey) > 0 {
+			buf.WriteString(fmt.Sprintf("export AWS_SECRET_ACCESS_KEY='%s';", ac[profile].SecretAccessKey))
 		}
-		if len(awsCredentials[profile].Region) > 0 {
-			buf.WriteString(fmt.Sprintf("export AWS_DEFAULT_REGION=%s", awsCredentials[profile].Region))
+		if len(ac[profile].Region) > 0 {
+			buf.WriteString(fmt.Sprintf("export AWS_DEFAULT_REGION=%s", ac[profile].Region))
 		}
 		fmt.Println(buf.String())
 	} else { // >= 2
-		if len(awsCredentials[profile].AccessKeyId) > 0 {
-			os.Setenv("AWS_ACCESS_KEY_ID", awsCredentials[profile].AccessKeyId)
+		if len(ac[profile].AccessKeyId) > 0 {
+			os.Setenv("AWS_ACCESS_KEY_ID", ac[profile].AccessKeyId)
 		}
-		if len(awsCredentials[profile].SecretAccessKey) > 0 {
-			os.Setenv("AWS_SECRET_ACCESS_KEY", awsCredentials[profile].SecretAccessKey)
+		if len(ac[profile].SecretAccessKey) > 0 {
+			os.Setenv("AWS_SECRET_ACCESS_KEY", ac[profile].SecretAccessKey)
 		}
-		if len(awsCredentials[profile].Region) > 0 {
-			os.Setenv("AWS_DEFAULT_REGION", awsCredentials[profile].Region)
+		if len(ac[profile].Region) > 0 {
+			os.Setenv("AWS_DEFAULT_REGION", ac[profile].Region)
 		}
 
 		var buf bytes.Buffer
@@ -82,12 +93,12 @@ func use(c *cli.Context) error {
 
 		args, err := shellwords.Parse(command)
 		if err != nil {
-			return err
+			return cli.NewExitError(err, 1)
 		}
 
 		out, err := exec.Command(args[0], args[1:]...).CombinedOutput()
 		if err != nil {
-			return err
+			return cli.NewExitError(err, 1)
 		}
 		fmt.Println(string(out))
 	}

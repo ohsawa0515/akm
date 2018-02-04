@@ -1,10 +1,7 @@
 package main
 
 import (
-	"os"
-	"os/user"
-	"path/filepath"
-	"runtime"
+	"fmt"
 	"strings"
 
 	"github.com/go-ini/ini"
@@ -18,33 +15,29 @@ type AwsCredential struct {
 
 type AwsCredentials map[string]*AwsCredential
 
-func getHomeDir() string {
-	usr, err := user.Current()
-	if err != nil || len(usr.HomeDir) > 0 {
-		return usr.HomeDir
-	}
-	if runtime.GOOS == "windows" {
-		return os.Getenv("HOMEPATH")
-	}
-	return os.Getenv("HOME")
-}
+func NewAwsCredentials(acPath, conPath string) (AwsCredentials, error) {
+	ac := make(AwsCredentials)
 
-func getAwsCredentialsPath() string {
-	return filepath.Join(getHomeDir(), ".aws", "credentials")
-}
-
-func getAwsConfigPath() string {
-	return filepath.Join(getHomeDir(), ".aws", "config")
-}
-
-func parseAwsCredentials() (AwsCredentials, error) {
-
-	awsCredentials := make(AwsCredentials)
-
-	// Credentials file
-	cre, err := ini.Load(getAwsCredentialsPath())
-	if err != nil {
+	if err := ac.ParseAwsCredentials(acPath); err != nil {
 		return nil, err
+	}
+
+	if err := ac.ParseAwsConfig(conPath); err != nil {
+		return nil, err
+	}
+
+	if len(ac) == 0 {
+		return nil, fmt.Errorf("no AWS credentials found")
+	}
+
+	return ac, nil
+}
+
+func (ac AwsCredentials) ParseAwsCredentials(acPath string) error {
+
+	cre, err := ini.Load(acPath)
+	if err != nil {
+		return err
 	}
 	cre.BlockMode = false
 
@@ -63,13 +56,17 @@ func parseAwsCredentials() (AwsCredentials, error) {
 		if err == nil {
 			awsCre.SecretAccessKey = awsSecretAccessKey.String()
 		}
-		awsCredentials[profile] = awsCre
+		ac[profile] = awsCre
 	}
 
-	// Config file
-	config, err := ini.Load(getAwsConfigPath())
+	return nil
+}
+
+func (ac AwsCredentials) ParseAwsConfig(conPath string) error {
+
+	config, err := ini.Load(conPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	config.BlockMode = false
 
@@ -78,14 +75,14 @@ func parseAwsCredentials() (AwsCredentials, error) {
 		if profile == "DEFAULT" {
 			continue
 		}
-		if _, ok := awsCredentials[profile]; !ok {
+		if _, ok := ac[profile]; !ok {
 			continue
 		}
 		region, err := section.GetKey("region")
 		if err == nil {
-			awsCredentials[profile].Region = region.String()
+			ac[profile].Region = region.String()
 		}
 	}
 
-	return awsCredentials, nil
+	return nil
 }
