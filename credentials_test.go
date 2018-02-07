@@ -55,8 +55,24 @@ func TestNotFoundAwsCredentials(t *testing.T) {
 	if _, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "not_credentials"), filepath.Join(dir, "test", ".aws", "config")); err == nil {
 		t.Error("credentials file should not be exists")
 	}
+}
 
-	if _, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "credentials"), filepath.Join(dir, "test", ".aws", "not_config")); err == nil {
-		t.Error("config file should not be exists")
+func TestRegion(t *testing.T) {
+	dir, _ := os.Getwd()
+	ac, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "credentials_region"), "")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if ac["region_test"].AccessKeyId != "AKIAIOSFODNN0EXAMPLE" {
+		t.Errorf("access key id mismatch; actual %v, expected %v", ac["region_test"].AccessKeyId, "AKIAIOSFODNN0EXAMPLE")
+	}
+
+	if ac["region_test"].SecretAccessKey != "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEB" {
+		t.Errorf("secret key mismatch; actual %v, expected %v", ac["region_test"].SecretAccessKey, "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEB")
+	}
+
+	if ac["region_test"].Region != "us-east-2" {
+		t.Errorf("region mismatch; actual %v, expected %v", ac["region_test"].Region, "us-east-2")
 	}
 }

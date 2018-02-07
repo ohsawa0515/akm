@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/go-ini/ini"
@@ -15,6 +16,11 @@ type AwsCredential struct {
 
 type AwsCredentials map[string]*AwsCredential
 
+func isExist(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
+
 func NewAwsCredentials(acPath, conPath string) (AwsCredentials, error) {
 	ac := make(AwsCredentials)
 
@@ -22,8 +28,10 @@ func NewAwsCredentials(acPath, conPath string) (AwsCredentials, error) {
 		return nil, err
 	}
 
-	if err := ac.ParseAwsConfig(conPath); err != nil {
-		return nil, err
+	if isExist(conPath) {
+		if err := ac.ParseAwsConfig(conPath); err != nil {
+			return nil, err
+		}
 	}
 
 	if len(ac) == 0 {
@@ -55,6 +63,11 @@ func (ac AwsCredentials) ParseAwsCredentials(acPath string) error {
 		awsSecretAccessKey, err := section.GetKey("aws_secret_access_key")
 		if err == nil {
 			awsCre.SecretAccessKey = awsSecretAccessKey.String()
+		}
+
+		awsRegion, err := section.GetKey("region")
+		if err == nil {
+			awsCre.Region = awsRegion.String()
 		}
 		ac[profile] = awsCre
 	}
