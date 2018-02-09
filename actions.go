@@ -25,10 +25,20 @@ func getHomeDir() string {
 }
 
 func getAwsCredentialsPath() string {
+
+	if awsCredentialsFile, ok := os.LookupEnv("AWS_SHARED_CREDENTIALS_FILE"); ok {
+		return awsCredentialsFile
+	}
+
 	return filepath.Join(getHomeDir(), ".aws", "credentials")
 }
 
 func getAwsConfigPath() string {
+
+	if awsConfigFile, ok := os.LookupEnv("AWS_CONFIG_FILE"); ok {
+		return awsConfigFile
+	}
+
 	return filepath.Join(getHomeDir(), ".aws", "config")
 }
 
