@@ -64,8 +64,7 @@ func use(c *cli.Context) error {
 	}
 
 	profile := c.Args().Get(0)
-	_, ok := ac[profile]
-	if !ok {
+	if _, ok := ac[profile]; !ok {
 		return cli.NewExitError(fmt.Sprintf("profile: %s doesn't exist", profile), 1)
 	}
 
@@ -110,6 +109,40 @@ func use(c *cli.Context) error {
 		}
 		fmt.Println(string(out))
 	}
+
+	return nil
+}
+
+func configure(c *cli.Context) error {
+
+	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	if c.NArg() == 0 {
+		return cli.NewExitError("Specify a profile", 2)
+	}
+
+	profile := c.Args().Get(0)
+	if _, ok := ac[profile]; !ok {
+		ac[profile] = &AwsCredential{}
+	}
+
+	// Start prompt
+	if err := ac[profile].AccessKeyIdPrompt(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	if err := ac[profile].SecretAccessKeyPrompt(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	if err := ac[profile].RegionPrompt(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	fmt.Println(ac[profile])
 
 	return nil
 }
