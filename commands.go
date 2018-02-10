@@ -16,5 +16,11 @@ func commands() []cli.Command {
 			Usage:   "Set specific AWS credential in environment values",
 			Action:  use,
 		},
+		{
+			Name:    "clear",
+			Aliases: []string{"c"},
+			Usage:   "Clear the environment variable of AWS credentials",
+			Action:  clear,
+		},
 	}
 }

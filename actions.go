@@ -25,7 +25,6 @@ func getHomeDir() string {
 }
 
 func getAwsCredentialsPath() string {
-
 	if awsCredentialsFile, ok := os.LookupEnv("AWS_SHARED_CREDENTIALS_FILE"); ok {
 		return awsCredentialsFile
 	}
@@ -34,7 +33,6 @@ func getAwsCredentialsPath() string {
 }
 
 func getAwsConfigPath() string {
-
 	if awsConfigFile, ok := os.LookupEnv("AWS_CONFIG_FILE"); ok {
 		return awsConfigFile
 	}
@@ -112,6 +110,16 @@ func use(c *cli.Context) error {
 		}
 		fmt.Println(string(out))
 	}
+
+	return nil
+}
+
+func clear(c *cli.Context) error {
+	var buf bytes.Buffer
+	buf.WriteString("unset AWS_ACCESS_KEY_ID;")
+	buf.WriteString("unset AWS_SECRET_ACCESS_KEY;")
+	buf.WriteString("unset AWS_DEFAULT_REGION;")
+	fmt.Println(buf.String())
 
 	return nil
 }
