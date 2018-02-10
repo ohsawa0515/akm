@@ -68,6 +68,7 @@ AUTHOR:
 COMMANDS:
      ls, l    List all AWS credentials profile
      use, u   Set specific AWS credential in environment values
+     clear, c  Clear the environment variable of AWS credentials
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -107,6 +108,22 @@ $ env | grep AWS
 AWS_ACCESS_KEY_ID=AKIAI44QH8DHBEXAMPLE
 AWS_SECRET_ACCESS_KEY=je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
 AWS_DEFAULT_REGION=us-east-1
+```
+
+## Clear
+
+Clear the environment variable of AWS credentials.
+
+```console
+$ env | grep AWS
+AWS_ACCESS_KEY_ID=AKIAI44QH8DHBEXAMPLE
+AWS_SECRET_ACCESS_KEY=je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
+AWS_DEFAULT_REGION=us-east-1
+
+$ eval $(akm clear)
+
+$ env | grep AWS
+# empty
 ```
 
 # Inspired by

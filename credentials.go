@@ -42,7 +42,6 @@ func NewAwsCredentials(acPath, conPath string) (AwsCredentials, error) {
 }
 
 func (ac AwsCredentials) ParseAwsCredentials(acPath string) error {
-
 	cre, err := ini.Load(acPath)
 	if err != nil {
 		return err
