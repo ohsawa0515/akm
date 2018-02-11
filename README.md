@@ -70,6 +70,7 @@ COMMANDS:
      use, u        Set specific AWS credential in environment values
      clear         Clear the environment variable of AWS credentials
      configure, c  Configure AWS credentials
+     delete, d     Delete profile from AWS credentials file
      help, h       Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -138,6 +139,15 @@ $ akm configure foo
 ✔ AWS Secret Access Key [None]: ****************************************
 ✔ Region: US East (N. Virginia) [us-east-1]
 ? Overwrite ~/.aws/credentials? [y/N] y
+```
+
+## Delete
+
+Delete profile from AWS credentials file. When the profile is deleted, the credentials file is **overwritten**.
+
+```console
+$ akm delete foo
+? Remove profile: foo, overwrite ~/.aws/credentials? [y/N] y
 ```
 
 # Inspired by

@@ -147,6 +147,29 @@ func configure(c *cli.Context) error {
 	return nil
 }
 
+func delete(c *cli.Context) error {
+	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	if c.NArg() == 0 {
+		return cli.NewExitError("Specify a profile", 2)
+	}
+
+	profile := c.Args().Get(0)
+	if _, ok := ac[profile]; !ok {
+		return cli.NewExitError(fmt.Sprintf("profile: %s doesn't exist", profile), 1)
+	}
+
+	// Delete profile from credentials file
+	if err := ac[profile].DeleteProfilePrompt(profile, getAwsCredentialsPath()); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	return nil
+}
+
 func clear(c *cli.Context) error {
 	var buf bytes.Buffer
 	buf.WriteString("unset AWS_ACCESS_KEY_ID;")
