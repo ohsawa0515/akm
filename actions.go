@@ -114,7 +114,6 @@ func use(c *cli.Context) error {
 }
 
 func configure(c *cli.Context) error {
-
 	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
 		return cli.NewExitError(err, 1)
@@ -133,16 +132,17 @@ func configure(c *cli.Context) error {
 	if err := ac[profile].AccessKeyIdPrompt(); err != nil {
 		return cli.NewExitError(err, 1)
 	}
-
 	if err := ac[profile].SecretAccessKeyPrompt(); err != nil {
 		return cli.NewExitError(err, 1)
 	}
-
 	if err := ac[profile].RegionPrompt(); err != nil {
 		return cli.NewExitError(err, 1)
 	}
 
-	fmt.Println(ac[profile])
+	// Save to credentials file
+	if err := ac[profile].SaveToCredentialsFilePrompt(profile, getAwsCredentialsPath()); err != nil {
+		return cli.NewExitError(err, 1)
+	}
 
 	return nil
 }

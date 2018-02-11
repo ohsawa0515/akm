@@ -2,6 +2,7 @@ package main
 
 func Regions() []string {
 	return []string{
+		"",               // None
 		"ap-northeast-1", // Asia Pacific (Tokyo)
 		"ap-northeast-2", // Asia Pacific (Seoul)
 		"ap-south-1",     // Asia Pacific (Mumbai)
