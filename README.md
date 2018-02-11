@@ -66,10 +66,11 @@ AUTHOR:
    Shuichi Ohsawa <ohsawa0515@gmail.com>
 
 COMMANDS:
-     ls, l    List all AWS credentials profile
-     use, u   Set specific AWS credential in environment values
-     clear, c  Clear the environment variable of AWS credentials
-     help, h  Shows a list of commands or help for one command
+     ls, l         List all AWS credentials profile
+     use, u        Set specific AWS credential in environment values
+     clear         Clear the environment variable of AWS credentials
+     configure, c  Configure AWS credentials
+     help, h       Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
@@ -124,6 +125,19 @@ $ eval $(akm clear)
 
 $ env | grep AWS
 # empty
+```
+
+## Configure
+
+Configure AWS credentials like `aws configure --profile PROFILE_NAME`.
+The set parameters are **overwritten** and saved in the credential file.
+
+```console
+$ akm configure foo
+✔ AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+✔ AWS Secret Access Key [None]: ****************************************
+✔ Region: US East (N. Virginia) [us-east-1]
+? Overwrite ~/.aws/credentials? [y/N] y
 ```
 
 # Inspired by
