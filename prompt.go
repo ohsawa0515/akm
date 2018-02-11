@@ -75,18 +75,24 @@ func (ac *AwsCredential) RegionPrompt() error {
 	var label string
 	message := "Default region name [%s]"
 	if len(ac.Region) == 0 {
-		label = fmt.Sprintf(message, "nil")
+		label = fmt.Sprintf(message, "None")
 	} else {
 		label = fmt.Sprintf(message, ac.Region)
 	}
-
-	prompt := promptui.Select{
-		Label: label,
-		Items: Regions(),
-		Size:  len(Regions()),
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   "-> {{ .Name }} [{{ .Code }}]",
+		Inactive: "   {{ .Name }} [{{ .Code }}]",
+		Selected: `{{ "✔" | green }} {{ "Region:" | bold }} {{ .Name | bold }} {{ "[" | bold }}{{ .Code | bold }}{{ "]" | bold }}`,
 	}
-	_, result, err := prompt.Run()
-	ac.Region = result
+	prompt := promptui.Select{
+		Label:     label,
+		Items:     regions,
+		Size:      len(regions),
+		Templates: templates,
+	}
+	i, _, err := prompt.Run()
+	ac.Region = regions[i].Code
 	if err != nil {
 		return err
 	}
