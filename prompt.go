@@ -83,7 +83,7 @@ func (ac *AwsCredential) RegionPrompt() error {
 		Label:    "{{ . }}?",
 		Active:   "-> {{ .Name }} [{{ .Code }}]",
 		Inactive: "   {{ .Name }} [{{ .Code }}]",
-		Selected: `{{ "✔" | green }} {{ "Region:" | bold }} {{ .Name | bold }} {{ "[" | bold }}{{ .Code | bold }}{{ "]" | bold }}`,
+		Selected: `{{ "\u2714" | green | bold }} {{ "Region:" | bold }} {{ .Name | bold }} {{ "[" | bold }}{{ .Code | bold }}{{ "]" | bold }}`,
 	}
 	prompt := promptui.Select{
 		Label:     label,
