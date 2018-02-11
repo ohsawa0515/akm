@@ -149,3 +149,26 @@ func (ac *AwsCredential) SaveToCredentialsFilePrompt(profile, file string) error
 
 	return nil
 }
+
+func (ac *AwsCredential) DeleteProfilePrompt(profile, file string) error {
+	cfg, err := ini.Load(file)
+	if err != nil {
+		return err
+	}
+
+	cfg.DeleteSection(profile)
+
+	// Save to credential file
+	prompt := promptui.Prompt{
+		Label:     fmt.Sprintf("Remove profile: %s, overwrite %s", profile, file),
+		IsConfirm: true,
+	}
+	if _, err := prompt.Run(); err != nil {
+		return fmt.Errorf("not deleted")
+	}
+	if err := cfg.SaveTo(file); err != nil {
+		return err
+	}
+
+	return nil
+}

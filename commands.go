@@ -27,5 +27,11 @@ func commands() []cli.Command {
 			Usage:   "Configure AWS credentials",
 			Action:  configure,
 		},
+		{
+			Name:    "delete",
+			Aliases: []string{"d"},
+			Usage:   "Delete profile from AWS credentials file",
+			Action:  delete,
+		},
 	}
 }
