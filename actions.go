@@ -41,11 +41,11 @@ func getAwsConfigPath() string {
 }
 
 func initialize(c *cli.Context) error {
-	if _, err := NewAkmConfig(); err != nil {
+	if err := CreateAkmConfig(); err != nil {
 		return cli.NewExitError(err, 1)
 	}
 
-	fmt.Printf(".akm.toml is created in %s\n", getAkmConfigPath())
+	fmt.Printf("config is created in %s\n", getAkmConfigPath())
 
 	return nil
 }
