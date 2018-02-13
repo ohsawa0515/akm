@@ -5,6 +5,12 @@ import cli "gopkg.in/urfave/cli.v1"
 func commands() []cli.Command {
 	return []cli.Command{
 		{
+			Name:    "init",
+			Aliases: []string{"i"},
+			Usage:   "Initialize akm config file for the first time usage",
+			Action:  initialize,
+		},
+		{
 			Name:    "ls",
 			Aliases: []string{"l"},
 			Usage:   "List all AWS credentials profile",

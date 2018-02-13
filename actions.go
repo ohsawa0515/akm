@@ -40,6 +40,16 @@ func getAwsConfigPath() string {
 	return filepath.Join(getHomeDir(), ".aws", "config")
 }
 
+func initialize(c *cli.Context) error {
+	if _, err := NewAkmConfig(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	fmt.Printf(".akm.toml is created in %s\n", getAkmConfigPath())
+
+	return nil
+}
+
 func list(c *cli.Context) error {
 	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
