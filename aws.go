@@ -9,6 +9,7 @@ var regions = []region{
 	{Name: "None", Code: ""},
 	{Name: "Asia Pacific (Tokyo)", Code: "ap-northeast-1"},
 	{Name: "Asia Pacific (Seoul)", Code: "ap-northeast-2"},
+	{Name: "Asia Pacific (Osaka-Local)", Code: "ap-northeast-3"},
 	{Name: "Asia Pacific (Mumbai)", Code: "ap-south-1"},
 	{Name: "Asia Pacific (Singapore)", Code: "ap-southeast-1"},
 	{Name: "Asia Pacific (Sydney)", Code: "ap-southeast-2"},
