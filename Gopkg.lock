@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/chzyer/readline"
   packages = ["."]
@@ -71,6 +77,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ff01c23340a16f1d17bea8c1978956dcadb1d6620e007e3f46483eb29fb281b3"
+  inputs-digest = "5d3ff58b5229685e8875d6bd31764f06cc86aa1d9ee5434b1f37d251911a31cd"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -66,6 +66,7 @@ AUTHOR:
    Shuichi Ohsawa <ohsawa0515@gmail.com>
 
 COMMANDS:
+     init, i       Initialize akm config file for the first time usage
      ls, l         List all AWS credentials profile
      use, u        Set specific AWS credential in environment values
      clear         Clear the environment variable of AWS credentials
@@ -76,6 +77,16 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h     show help
    --version, -v  print the version
+```
+
+## Initialize(init)
+
+Initialize akm config file for the first time usage. After execution, `.akm.toml` is created.
+
+
+```console
+$ akm init
+.akm.toml is created in ~/.akm.toml
 ```
 
 ## List(ls)
