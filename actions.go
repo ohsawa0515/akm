@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"sort"
 
 	shellwords "github.com/mattn/go-shellwords"
 	cli "gopkg.in/urfave/cli.v1"
@@ -56,8 +57,23 @@ func list(c *cli.Context) error {
 		return cli.NewExitError(err, 1)
 	}
 
-	for profile := range ac {
-		fmt.Println(profile)
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	var profiles []string
+	for p := range ac {
+		profiles = append(profiles, p)
+	}
+	sort.Strings(profiles)
+
+	for _, profile := range profiles {
+		if profile == akmConfig.Current {
+			fmt.Printf("%s (Current)\n", profile)
+		} else {
+			fmt.Printf("%s\n", profile)
+		}
 	}
 
 	return nil
