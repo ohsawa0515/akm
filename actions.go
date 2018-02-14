@@ -136,6 +136,16 @@ func use(c *cli.Context) error {
 		fmt.Println(string(out))
 	}
 
+	// Set current setting to config file
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+	akmConfig.Current = profile
+	if err := akmConfig.Save(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
 	return nil
 }
 

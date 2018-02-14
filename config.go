@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -57,4 +58,24 @@ func NewAkmConfig() (*AkmConfig, error) {
 	}
 
 	return akmConfig, nil
+}
+
+func (akmConfig *AkmConfig) Save() error {
+	var buf bytes.Buffer
+
+	if err := toml.NewEncoder(&buf).Encode(akmConfig); err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile(getAkmConfigPath(), os.O_WRONLY, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString(buf.String()); err != nil {
+		return err
+	}
+
+	return nil
 }
