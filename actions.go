@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"sort"
 
 	shellwords "github.com/mattn/go-shellwords"
 	cli "gopkg.in/urfave/cli.v1"
@@ -41,11 +42,11 @@ func getAwsConfigPath() string {
 }
 
 func initialize(c *cli.Context) error {
-	if _, err := NewAkmConfig(); err != nil {
+	if err := CreateAkmConfig(); err != nil {
 		return cli.NewExitError(err, 1)
 	}
 
-	fmt.Printf(".akm.toml is created in %s\n", getAkmConfigPath())
+	fmt.Printf("config is created in %s\n", getAkmConfigPath())
 
 	return nil
 }
@@ -56,8 +57,23 @@ func list(c *cli.Context) error {
 		return cli.NewExitError(err, 1)
 	}
 
-	for profile := range ac {
-		fmt.Println(profile)
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	var profiles []string
+	for p := range ac {
+		profiles = append(profiles, p)
+	}
+	sort.Strings(profiles)
+
+	for _, profile := range profiles {
+		if profile == akmConfig.Current {
+			fmt.Printf("%s (Current)\n", profile)
+		} else {
+			fmt.Printf("%s\n", profile)
+		}
 	}
 
 	return nil
@@ -118,6 +134,16 @@ func use(c *cli.Context) error {
 			return cli.NewExitError(err, 1)
 		}
 		fmt.Println(string(out))
+	}
+
+	// Set current setting to config file
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+	akmConfig.Current = profile
+	if err := akmConfig.Save(); err != nil {
+		return cli.NewExitError(err, 1)
 	}
 
 	return nil
