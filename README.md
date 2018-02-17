@@ -1,5 +1,8 @@
-AKM
+AKM: Aws access Key Manager
 ===
+
+[![Build Status](https://travis-ci.org/ohsawa0515/akm.svg?branch=master)](https://travis-ci.org/ohsawa0515/akm)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ohsawa0515/akm)](https://goreportcard.com/report/github.com/ohsawa0515/akm)
 
 AKM is a simple AWS access Keys Manager.
 
@@ -7,9 +10,23 @@ It helps you to switch multiple AWS credentials easily. And it is useful when co
 
 # Installation
 
+## Download binary
+
+Download it from [releases page](https://github.com/ohsawa0515/akm/releases) and extract it to /usr/bin or your PATH directory.
+
+## Using Go
+
+If you have not installed [dep](https://github.com/golang/dep) yet, please install it.
+
+```console
+$ go get -u github.com/golang/dep/cmd/dep 
+```
+
 ```console
 $ go get -u github.com/ohsawa0515/akm
+$ dep ensure
 ```
+
 
 # Set AWS credentials
 
