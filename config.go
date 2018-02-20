@@ -75,3 +75,12 @@ func (akmConfig *AkmConfig) Save() error {
 
 	return nil
 }
+
+func (akmConfig *AkmConfig) Delete() error {
+	akmConfig.Current = ""
+	if err := akmConfig.Save(); err != nil {
+		return err
+	}
+
+	return nil
+}

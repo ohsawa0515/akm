@@ -213,5 +213,13 @@ func clear(c *cli.Context) error {
 	buf.WriteString("unset AWS_DEFAULT_REGION;")
 	fmt.Println(buf.String())
 
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+	if err := akmConfig.Delete(); err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
 	return nil
 }
