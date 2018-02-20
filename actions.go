@@ -149,6 +149,21 @@ func use(c *cli.Context) error {
 	return nil
 }
 
+func current(c *cli.Context) error {
+	akmConfig, err := NewAkmConfig()
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	if len(akmConfig.Current) == 0 {
+		return cli.NewExitError(fmt.Errorf("profile is not specified"), 1)
+	}
+
+	fmt.Printf(akmConfig.Current)
+
+	return nil
+}
+
 func configure(c *cli.Context) error {
 	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
