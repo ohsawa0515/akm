@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -67,15 +68,10 @@ func (akmConfig *AkmConfig) Save() error {
 		return err
 	}
 
-	f, err := os.OpenFile(getAkmConfigPath(), os.O_WRONLY, 0)
-	if err != nil {
+	if err := ioutil.WriteFile(getAkmConfigPath(), buf.Bytes(), 0); err != nil {
 		return err
 	}
-	defer f.Close()
-
-	if _, err := f.WriteString(buf.String()); err != nil {
-		return err
-	}
+	defer buf.Reset()
 
 	return nil
 }
