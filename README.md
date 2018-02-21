@@ -86,6 +86,7 @@ COMMANDS:
      init, i       Initialize akm config file for the first time usage
      ls, l         List all AWS credentials profile
      use, u        Set specific AWS credential in environment values
+     current, c    Show current profile name
      clear         Clear the environment variable of AWS credentials
      configure, c  Configure AWS credentials
      delete, d     Delete profile from AWS credentials file
@@ -138,6 +139,16 @@ $ env | grep AWS
 AWS_ACCESS_KEY_ID=AKIAI44QH8DHBEXAMPLE
 AWS_SECRET_ACCESS_KEY=je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
 AWS_DEFAULT_REGION=us-east-1
+```
+
+## Current
+
+Show current profile name.
+
+```console
+$ akm use account1
+$ akm current
+account1
 ```
 
 ## Clear

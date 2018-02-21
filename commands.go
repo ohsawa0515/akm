@@ -23,6 +23,12 @@ func commands() []cli.Command {
 			Action:  use,
 		},
 		{
+			Name:    "current",
+			Aliases: []string{"c"},
+			Usage:   "Show current profile name",
+			Action:  current,
+		},
+		{
 			Name:   "clear",
 			Usage:  "Clear the environment variable of AWS credentials",
 			Action: clear,
