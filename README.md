@@ -83,14 +83,15 @@ AUTHOR:
    Shuichi Ohsawa <ohsawa0515@gmail.com>
 
 COMMANDS:
-     init, i       Initialize akm config file for the first time usage
-     ls, l         List all AWS credentials profile
-     use, u        Set specific AWS credential in environment values
-     current, c    Show current profile name
-     clear         Clear the environment variable of AWS credentials
-     configure, c  Configure AWS credentials
-     delete, d     Delete profile from AWS credentials file
-     help, h       Shows a list of commands or help for one command
+     init, i     Initialize akm config file for the first time usage
+     ls, l       List all AWS credentials profile
+     use, u      Set specific AWS credential in environment values
+     current, c  Show current profile name
+     echo, e     Show the AWS key or region with the specified profile name
+     configure   Configure AWS credentials
+     clear, C    Clear the environment variable of AWS credentials
+     delete, d   Delete profile from AWS credentials file
+     help, h     Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
@@ -151,6 +152,42 @@ $ akm current
 account1
 ```
 
+## Echo
+
+Show the AWS key or region with the specified profile name.
+
+```console
+$ akm echo PROFILE SETTING or REGION
+
+$ akm echo account1 aws_access_key_id
+AKIAI44QH8DHBEXAMPLE
+
+$ akm echo account1 aws_secret_access_key
+je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
+
+$ akm echo account1 region
+us-east-1
+
+# Show current AWS key
+$ aws use account2
+$ akm echo $(akm current) aws_access_key_id
+AKIAI44QH8DHBEXAMPLE2  # account2's AWS access key id
+```
+
+
+## Configure
+
+Configure AWS credentials like `aws configure --profile PROFILE_NAME`.
+The set parameters are **overwritten** and saved in the credential file.
+
+```console
+$ akm configure foo
+✔ AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+✔ AWS Secret Access Key [None]: ****************************************
+✔ Region: US East (N. Virginia) [us-east-1]
+? Overwrite ~/.aws/credentials? [y/N] y
+```
+
 ## Clear
 
 Clear the environment variable of AWS credentials.
@@ -165,19 +202,6 @@ $ eval $(akm clear)
 
 $ env | grep AWS
 # empty
-```
-
-## Configure
-
-Configure AWS credentials like `aws configure --profile PROFILE_NAME`.
-The set parameters are **overwritten** and saved in the credential file.
-
-```console
-$ akm configure foo
-✔ AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
-✔ AWS Secret Access Key [None]: ****************************************
-✔ Region: US East (N. Virginia) [us-east-1]
-? Overwrite ~/.aws/credentials? [y/N] y
 ```
 
 ## Delete

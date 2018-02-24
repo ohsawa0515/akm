@@ -31,7 +31,7 @@ func commands() []cli.Command {
 		{
 			Name:    "echo",
 			Aliases: []string{"e"},
-			Usage:   "Show the current AWS key or region by profile name",
+			Usage:   "Show the AWS key or region with the specified profile name",
 			Action:  echo,
 		},
 		{
