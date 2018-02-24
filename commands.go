@@ -29,6 +29,12 @@ func commands() []cli.Command {
 			Action:  current,
 		},
 		{
+			Name:    "echo",
+			Aliases: []string{"e"},
+			Usage:   "Show the current AWS key or region by profile name",
+			Action:  echo,
+		},
+		{
 			Name:   "clear",
 			Usage:  "Clear the environment variable of AWS credentials",
 			Action: clear,

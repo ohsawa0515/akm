@@ -164,6 +164,42 @@ func current(c *cli.Context) error {
 	return nil
 }
 
+func echo(c *cli.Context) error {
+	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	switch c.NArg() {
+	case 0:
+		return cli.NewExitError("Select a profile", 2)
+	case 1:
+		return cli.NewExitError("Select a setting (aws_access_key_id or aws_secret_access_key or region)", 2)
+	}
+
+	profile := c.Args().Get(0)
+	if _, ok := ac[profile]; !ok {
+		return cli.NewExitError(fmt.Sprintf("profile: %s doesn't exist", profile), 1)
+	}
+
+	setting := c.Args().Get(1)
+	switch setting {
+	case "aws_access_key_id":
+		fmt.Println(ac[profile].AccessKeyId)
+		return nil
+	case "aws_secret_access_key":
+		fmt.Println(ac[profile].SecretAccessKey)
+		return nil
+	case "region":
+		fmt.Println(ac[profile].Region)
+		return nil
+	default:
+		return cli.NewExitError("Select a setting (aws_access_key_id or aws_secret_access_key or region)", 2)
+	}
+
+	return nil
+}
+
 func configure(c *cli.Context) error {
 	ac, err := NewAwsCredentials(getAwsCredentialsPath(), getAwsConfigPath())
 	if err != nil {
