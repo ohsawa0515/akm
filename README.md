@@ -231,3 +231,8 @@ $ akm delete foo
 # License
 
 See [LICENSE](https://github.com/ohsawa0515/akm/blob/master/LICENSE).
+
+# Author
+
+Shuichi Ohsawa (@ohsawa0515)
+
