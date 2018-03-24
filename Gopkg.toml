@@ -17,3 +17,7 @@
 [[constraint]]
   name = "github.com/manifoldco/promptui"
   branch = "master"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.1"

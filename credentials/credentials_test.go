@@ -1,4 +1,4 @@
-package main
+package credentials
 
 import (
 	"os"
@@ -6,9 +6,34 @@ import (
 	"testing"
 )
 
+func TestGetAwsCredentialsPath(t *testing.T) {
+	testAwsCredentialsFile := filepath.Join("../", "test", ".aws", "credentials")
+	os.Setenv("AWS_SHARED_CREDENTIALS_FILE", testAwsCredentialsFile)
+
+	credentialsPath := getAwsCredentialsPath()
+	if credentialsPath != testAwsCredentialsFile {
+		t.Errorf("credentials file mismatch; actual %v, expected %v", credentialsPath, testAwsCredentialsFile)
+	}
+}
+
+func TestGetAwsConfigPath(t *testing.T) {
+	testAwsConfigFile := filepath.Join("../", "test", ".aws", "config")
+	os.Setenv("AWS_CONFIG_FILE", testAwsConfigFile)
+
+	configPath := getAwsConfigPath()
+	if configPath != testAwsConfigFile {
+		t.Errorf("config file mismatch; actual %v, expected %v", configPath, testAwsConfigFile)
+	}
+}
+
 func TestParseAwsCredentialsAndConfig(t *testing.T) {
-	dir, _ := os.Getwd()
-	ac, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "credentials"), filepath.Join(dir, "test", ".aws", "config"))
+	testAwsCredentialsFile := filepath.Join("../", "test", ".aws", "credentials")
+	os.Setenv("AWS_SHARED_CREDENTIALS_FILE", testAwsCredentialsFile)
+
+	testAwsConfigFile := filepath.Join("../", "test", ".aws", "config")
+	os.Setenv("AWS_CONFIG_FILE", testAwsConfigFile)
+
+	ac, err := NewAwsCredentials()
 	if err != nil {
 		t.Error(err)
 	}
@@ -51,15 +76,22 @@ func TestParseAwsCredentialsAndConfig(t *testing.T) {
 }
 
 func TestNotFoundAwsCredentials(t *testing.T) {
-	dir, _ := os.Getwd()
-	if _, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "not_credentials"), filepath.Join(dir, "test", ".aws", "config")); err == nil {
+	testNotAwsCredentialsFile := filepath.Join("../", "test", ".aws", "not_credentials")
+	os.Setenv("AWS_SHARED_CREDENTIALS_FILE", testNotAwsCredentialsFile)
+
+	testAwsConfigFile := filepath.Join("../", "test", ".aws", "config")
+	os.Setenv("AWS_CONFIG_FILE", testAwsConfigFile)
+
+	if _, err := NewAwsCredentials(); err == nil {
 		t.Error("credentials file should not be exists")
 	}
 }
 
 func TestRegion(t *testing.T) {
-	dir, _ := os.Getwd()
-	ac, err := NewAwsCredentials(filepath.Join(dir, "test", ".aws", "credentials_region"), "")
+	testRegionAwsCredentialsFile := filepath.Join("../", "test", ".aws", "credentials_region")
+	os.Setenv("AWS_SHARED_CREDENTIALS_FILE", testRegionAwsCredentialsFile)
+
+	ac, err := NewAwsCredentials()
 	if err != nil {
 		t.Error(err)
 	}

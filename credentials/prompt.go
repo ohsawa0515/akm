@@ -1,4 +1,4 @@
-package main
+package credentials
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-ini/ini"
 	"github.com/manifoldco/promptui"
-	cli "gopkg.in/urfave/cli.v1"
+	"github.com/ohsawa0515/akm/aws"
 )
 
 func accessKeyIdValidate(input string) error {
@@ -87,12 +87,12 @@ func (ac *AwsCredential) RegionPrompt() error {
 	}
 	prompt := promptui.Select{
 		Label:     label,
-		Items:     regions,
-		Size:      len(regions),
+		Items:     aws.Regions,
+		Size:      len(aws.Regions),
 		Templates: templates,
 	}
 	i, _, err := prompt.Run()
-	ac.Region = regions[i].Code
+	ac.Region = aws.Regions[i].Code
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,8 @@ func (ac *AwsCredential) RegionPrompt() error {
 	return nil
 }
 
-func (ac *AwsCredential) SaveToCredentialsFilePrompt(profile, file string) error {
+func (ac *AwsCredential) SaveToCredentialsFilePrompt(profile string) error {
+	file := getAwsCredentialsPath()
 	cfg, err := ini.Load(file)
 	if err != nil {
 		return err
@@ -144,13 +145,14 @@ func (ac *AwsCredential) SaveToCredentialsFilePrompt(profile, file string) error
 		return fmt.Errorf("not overwritten")
 	}
 	if err := cfg.SaveTo(file); err != nil {
-		return cli.NewExitError(err, 1)
+		return err
 	}
 
 	return nil
 }
 
-func (ac *AwsCredential) DeleteProfilePrompt(profile, file string) error {
+func (ac *AwsCredential) DeleteProfilePrompt(profile string) error {
+	file := getAwsCredentialsPath()
 	cfg, err := ini.Load(file)
 	if err != nil {
 		return err

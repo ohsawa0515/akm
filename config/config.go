@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ohsawa0515/akm/utils"
 )
 
 type AkmConfig struct {
@@ -19,7 +20,7 @@ func getAkmHomeDir() string {
 		return dir
 	}
 
-	return filepath.Join(getHomeDir(), ".akm")
+	return filepath.Join(utils.GetHomeDir(), ".akm")
 }
 
 func getAkmConfigPath() string {

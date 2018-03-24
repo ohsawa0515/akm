@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"os"
@@ -7,16 +7,14 @@ import (
 )
 
 func getTestAkmHomeDir() string {
-	dir, _ := os.Getwd()
-	d := filepath.Join(dir, "test", ".akm")
+	d := filepath.Join("../", "test", ".akm")
 	os.Setenv("AKM_CONFIG_DIR", d)
 
 	return d
 }
 
 func getTestAkmConfigPath() string {
-	dir, _ := os.Getwd()
-	d := filepath.Join(dir, "test", ".akm", "config")
+	d := filepath.Join("../", "test", ".akm", "config")
 	os.Setenv("AKM_CONFIG_FILE", d)
 
 	return d
