@@ -12,7 +12,7 @@ func NewCmdList() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls", "l"},
-		Short:   "List all AWS credentials profile",
+		Short:   "List all AWS credentials profile.",
 		RunE:    listAction,
 	}
 

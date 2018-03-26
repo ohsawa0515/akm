@@ -11,8 +11,21 @@ func NewCmdClear() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "clear",
 		Aliases: []string{"C"},
-		Short:   "Clear the environment variable of AWS credentials",
-		RunE:    clearAction,
+		Short:   "Delete the environment variable of AWS credentials.",
+		Example: `$ akm clear
+  unset AWS_ACCESS_KEY_ID;unset AWS_SECRET_ACCESS_KEY;unset AWS_DEFAULT_REGION;
+
+  Delete environment variable with eval.
+  $ env | grep AWS
+  AWS_ACCESS_KEY_ID=xxxxxxx
+  AWS_SECRET_ACCESS_KEY=xxxxxxx
+  AWS_DEFAULT_REGION=us-east-1
+
+  $ eval $(akm clear)
+
+  $ env | grep AWS
+  # empty`,
+		RunE: clearAction,
 	}
 
 	return cmd

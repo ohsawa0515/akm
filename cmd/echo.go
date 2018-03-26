@@ -9,9 +9,9 @@ import (
 
 func NewCmdEcho() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "echo",
+		Use:     "echo PROFILE aws_access_key_id | aws_secret_access_key | region",
 		Aliases: []string{"e"},
-		Short:   "Show the AWS key or region with the specified profile name",
+		Short:   "Show the AWS key or region with the specified profile name.",
 		Args:    cobra.MinimumNArgs(2),
 		RunE:    echoAction,
 	}

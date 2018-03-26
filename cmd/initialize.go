@@ -9,8 +9,10 @@ func NewCmdInitialize() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "init",
 		Aliases: []string{"i"},
-		Short:   "Initialize akm config file for the first time usage.",
-		RunE:    initAction,
+		Short:   "Initialize for akm command",
+		Long: `Initialize akm command for the first time usage.
+  After execution, "$HOME/.akm.toml" is created.`,
+		RunE: initAction,
 	}
 
 	return cmd

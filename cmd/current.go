@@ -10,8 +10,7 @@ func NewCmdCurrent() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "current",
 		Aliases: []string{"c"},
-		Short:   "Show current profile name",
-		Args:    cobra.MinimumNArgs(1),
+		Short:   "Show current profile name.",
 		RunE:    currentAction,
 	}
 

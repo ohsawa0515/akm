@@ -12,14 +12,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCmdUse() *cobra.Command {
+func NewCmdUse(useSub bool) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:                "use",
-		Aliases:            []string{"u"},
-		Short:              "Set specific AWS credential in environment values",
-		DisableFlagParsing: true,
-		Args:               cobra.MinimumNArgs(1),
-		RunE:               useAction,
+		Use:     "use PROFILE [[ANY COMMAND]...]",
+		Aliases: []string{"u"},
+		Short:   "Use specific AWS credential key",
+		Long: `Set specific AWS credential in environment values.
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_SESSION_TOKEN  (if session token is set)
+    - AWS_DEFAULT_REGION (if region is set)
+  If an arbitrary command was specified as an argument, store the AWS credentials key in the environment variable and then execute the command.`,
+		Example: `case 1) Set specific AWS credential in environment values.
+    $ akm use foo
+    export AWS_ACCESS_KEY_ID='xxxxxxxx';export AWS_SECRET_ACCESS_KEY='xxxxxxxxx';export AWS_DEFAULT_REGION=us-east-1
+
+  case 2) Import variables into your environment by eval.
+    $ eval $(akm use foo)
+    $ env | grep AWS
+    AWS_ACCESS_KEY_ID=xxxxxxxx
+    AWS_SECRET_ACCESS_KEY=xxxxxxxxx
+    AWS_DEFAULT_REGION=us-east-1
+
+  case 3) Store the AWS credentials key in the environment variable and then execute the command.
+    $ akm use foo terraform plan`,
+		Args: cobra.MinimumNArgs(1),
+		RunE: useAction,
+	}
+
+	// if specify sub command, disable parse flag
+	if useSub {
+		cmd.DisableFlagParsing = true
 	}
 
 	return cmd

@@ -100,7 +100,7 @@ GLOBAL OPTIONS:
 
 ## Initialize(init)
 
-Initialize akm config file for the first time usage. After execution, `.akm.toml` is created.
+Initialize akm command for the first time usage. After execution, `$HOME/.akm.toml` is created.
 
 
 ```console
@@ -190,7 +190,14 @@ $ akm configure foo
 
 ## Clear
 
-Clear the environment variable of AWS credentials.
+Delete the environment variable of AWS credentials.
+
+```console
+$ akm clear
+unset AWS_ACCESS_KEY_ID;unset AWS_SECRET_ACCESS_KEY;unset AWS_DEFAULT_REGION;
+```
+
+Delete environment variable with eval.
 
 ```console
 $ env | grep AWS

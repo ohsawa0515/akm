@@ -8,9 +8,12 @@ import (
 
 func NewCmdDelete() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "delete",
+		Use:     "delete PROFILE",
 		Aliases: []string{"del", "d"},
-		Short:   "Delete profile from AWS credentials file",
+		Short:   "Delete profile from AWS credentials file.",
+		Long: `Delete profile from AWS credentials file.
+  When the profile is deleted, the credentials file is **overwritten**.`,
+		Example: `akm delete foo`,
 		Args:    cobra.MinimumNArgs(1),
 		RunE:    deleteAction,
 	}

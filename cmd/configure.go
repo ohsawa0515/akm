@@ -8,10 +8,13 @@ import (
 
 func NewCmdConfigure() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configure",
+		Use:   "configure PROFILE",
 		Short: "Configure AWS credentials",
-		Args:  cobra.MinimumNArgs(1),
-		RunE:  configureAction,
+		Long: `Configure AWS credentials like "aws configure --profile PROFILE".
+  The set parameters are **overwritten** and saved in the credential file.`,
+		Example: `akm configure foo`,
+		Args:    cobra.MinimumNArgs(1),
+		RunE:    configureAction,
 	}
 
 	return cmd

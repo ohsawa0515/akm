@@ -52,12 +52,19 @@ func Execute() {
 func addCommands(cmd *cobra.Command) {
 	cmd.AddCommand(NewCmdInitialize())
 	cmd.AddCommand(NewCmdList())
-	cmd.AddCommand(NewCmdUse())
 	cmd.AddCommand(NewCmdCurrent())
 	cmd.AddCommand(NewCmdEcho())
 	cmd.AddCommand(NewCmdConfigure())
 	cmd.AddCommand(NewCmdDelete())
 	cmd.AddCommand(NewCmdClear())
+
+	var useSub bool
+	if len(os.Args) > 3 {
+		useSub = true
+	} else {
+		useSub = false
+	}
+	cmd.AddCommand(NewCmdUse(useSub))
 }
 
 func UseLine(cmd *cobra.Command) string {
