@@ -31,6 +31,7 @@ func NewCmdRoot() *cobra.Command {
 				return nil
 			}
 
+			cmd.HelpFunc()(cmd, args)
 			return nil
 		},
 	}
