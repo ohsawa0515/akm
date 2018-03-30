@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/ohsawa0515/akm/app"
@@ -12,6 +13,7 @@ func init() {
 }
 
 var appName = "akm"
+var printVersion = false
 
 func NewCmdRoot() *cobra.Command {
 	cliApp := app.NewCliApps()
@@ -23,17 +25,28 @@ func NewCmdRoot() *cobra.Command {
 		SilenceErrors:    true,
 		TraverseChildren: true,
 		Args:             cobra.NoArgs,
-		Run:              func(cmd *cobra.Command, args []string) {},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if printVersion {
+				showVersion()
+				return nil
+			}
+
+			return nil
+		},
 	}
 
 	addCommands(cmd)
 
-	cobra.AddTemplateFunc("useLine", UseLine)
+	cobra.AddTemplateFunc("useLine", useLine)
 	cobra.AddTemplateFunc("version", func() string { return cliApp.Version })
 	cobra.AddTemplateFunc("author", func() string { return cliApp.Author })
 	cmd.SetUsageTemplate(usageTemplate)
 	cmd.SetHelpTemplate(helpTemplate)
 
+	// Local Flags
+	cmd.Flags().BoolVarP(&printVersion, "version", "v", false, "Print the version")
+
+	// Global Flags
 	cmd.PersistentFlags().BoolP("help", "h", false, "Print help")
 
 	return cmd
@@ -67,7 +80,12 @@ func addCommands(cmd *cobra.Command) {
 	cmd.AddCommand(NewCmdUse(useSub))
 }
 
-func UseLine(cmd *cobra.Command) string {
+func showVersion() {
+	cliApp := app.NewCliApps()
+	fmt.Printf("akm version %s\n", cliApp.Version)
+}
+
+func useLine(cmd *cobra.Command) string {
 	if cmd.HasParent() {
 		return cmd.Parent().CommandPath() + " " + cmd.Use
 	}
