@@ -28,8 +28,8 @@ func TestCmdUseSuccess(t *testing.T) {
 	}{
 		{command: "akm use for_profile_test ls"},
 		{command: "akm use for_profile_test ls -la"},
-		{command: "akm use for_profile_test cd ../"},
-		{command: "akm use for_profile_test alias ll='ls -lG'"},
+		{command: "akm use for_profile_test ls ../"},
+		{command: "akm use for_profile_test echo 'aaa'"},
 	}
 	for _, c := range cases {
 		buf := new(bytes.Buffer)
