@@ -15,3 +15,6 @@
 
 vendor/
 dist/
+
+test/.akm/config_use
+test/.akm/config_clear

@@ -1,11 +1,11 @@
-package main
+package aws
 
 type region struct {
 	Name string
 	Code string
 }
 
-var regions = []region{
+var Regions = []region{
 	{Name: "None", Code: ""},
 	{Name: "Asia Pacific (Tokyo)", Code: "ap-northeast-1"},
 	{Name: "Asia Pacific (Seoul)", Code: "ap-northeast-2"},

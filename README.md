@@ -68,40 +68,59 @@ output=text
 # Usage
 
 ```console
-$ akm
+$ akm -help
 
-NAME:
-   akm - A simple AWS access keys manager
+Name:
+  akm - A simple AWS access keys manager
 
-USAGE:
-   actions [global options] command [command options] [arguments...]
+Usage:
+  akm COMMAND
 
-VERSION:
-   0.1.0
+Version:
+  0.0.1
 
-AUTHOR:
-   Shuichi Ohsawa <ohsawa0515@gmail.com>
+Author:
+  Shuichi Ohsawa <ohsawa0515@gmail.com>
 
-COMMANDS:
-     init, i     Initialize akm config file for the first time usage
-     ls, l       List all AWS credentials profile
-     use, u      Set specific AWS credential in environment values
-     current, c  Show current profile name
-     echo, e     Show the AWS key or region with the specified profile name
-     configure   Configure AWS credentials
-     clear, C    Clear the environment variable of AWS credentials
-     delete, d   Delete profile from AWS credentials file
-     help, h     Shows a list of commands or help for one command
+Commands:
+  clear       Delete the environment variable of AWS credentials.
+  configure   Configure AWS credentials
+  current     Show current profile name.
+  delete      Delete profile from AWS credentials file.
+  echo        Show the AWS key or region with the specified profile name.
+  help        Help about any command
+  init        Initialize for akm command
+  list        List all AWS credentials profile.
+  use         Use specific AWS credential key
 
-GLOBAL OPTIONS:
-   --help, -h     show help
-   --version, -v  print the version
+Flags:
+  -h, --help      Print help
+  -v, --version   Print the version
 ```
 
 ## Initialize(init)
 
-Initialize akm config file for the first time usage. After execution, `.akm.toml` is created.
+```console
+$ akm init --help
 
+Name:
+  akm init - Initialize for akm command
+
+Usage:
+  akm init
+
+Aliases:
+  init, i
+
+Description:
+  Initialize akm command for the first time usage.
+  After execution, "$HOME/.akm.toml" is created.
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
 $ akm init
@@ -110,7 +129,23 @@ $ akm init
 
 ## List(ls)
 
-List all AWS credentials profile.
+```console
+$ akm ls --help
+
+Name:
+  akm list - List all AWS credentials profile.
+
+Usage:
+  akm list
+
+Aliases:
+  list, ls, l
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
 $ akm ls
@@ -121,19 +156,49 @@ account2
 
 ## Use
 
-Set specific AWS credential in environment values.
-
 ```console
-# Command wapper
-$ akm use <PROFILE> <Some command> [args...]
+$ akm use --help
 
-## For example
-$ akm use account1 terraform apply
+Name:
+  akm use - Use specific AWS credential key
+
+Usage:
+  akm use PROFILE [[ANY COMMAND]...]
+
+Aliases:
+  use, u
+
+Description:
+  Set specific AWS credential in environment values.
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_SESSION_TOKEN  (if session token is set)
+    - AWS_DEFAULT_REGION (if region is set)
+  If an arbitrary command was specified as an argument, store the AWS credentials key in the environment variable and then execute the command.
+
+Examples:
+  case 1) Set specific AWS credential in environment values.
+    $ akm use foo
+    export AWS_ACCESS_KEY_ID='xxxxxxxx';export AWS_SECRET_ACCESS_KEY='xxxxxxxxx';export AWS_DEFAULT_REGION=us-east-1
+
+  case 2) Import variables into your environment by eval.
+    $ eval $(akm use foo)
+    $ env | grep AWS
+    AWS_ACCESS_KEY_ID=xxxxxxxx
+    AWS_SECRET_ACCESS_KEY=xxxxxxxxx
+    AWS_DEFAULT_REGION=us-east-1
+
+  case 3) Store the AWS credentials key in the environment variable and then execute the command.
+    $ akm use foo terraform plan
+
+Global Flags:
+  -h, --help   Print help
 ```
 
-Import variables into your environment by eval.
+For example:
 
 ```console
+# Import variables into your environment by eval.
 $ eval $(akm use account1)
 
 $ env | grep AWS
@@ -142,9 +207,30 @@ AWS_SECRET_ACCESS_KEY=je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY
 AWS_DEFAULT_REGION=us-east-1
 ```
 
+```console
+# Command wapper
+$ akm use account1 terraform apply
+```
+
 ## Current
 
-Show current profile name.
+```console
+$ akm current --help
+
+Name:
+  akm current - Show current profile name.
+
+Usage:
+  akm current
+
+Aliases:
+  current, c
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
 $ akm use account1
@@ -154,11 +240,25 @@ account1
 
 ## Echo
 
-Show the AWS key or region with the specified profile name.
+```console
+$ akm echo --help
+
+Name:
+  akm echo - Show the AWS key or region with the specified profile name.
+
+Usage:
+  akm echo PROFILE aws_access_key_id | aws_secret_access_key | region
+
+Aliases:
+  echo, e
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
-$ akm echo PROFILE SETTING or REGION
-
 $ akm echo account1 aws_access_key_id
 AKIAI44QH8DHBEXAMPLE
 
@@ -174,11 +274,29 @@ $ akm echo $(akm current) aws_access_key_id
 AKIAI44QH8DHBEXAMPLE2  # account2's AWS access key id
 ```
 
-
 ## Configure
 
-Configure AWS credentials like `aws configure --profile PROFILE_NAME`.
-The set parameters are **overwritten** and saved in the credential file.
+```console
+$ akm configure --help
+
+Name:
+  akm configure - Configure AWS credentials
+
+Usage:
+  akm configure PROFILE
+
+Description:
+  Configure AWS credentials like "aws configure --profile PROFILE".
+  The set parameters are **overwritten** and saved in the credential file.
+
+Examples:
+  akm configure foo
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
 $ akm configure foo
@@ -190,7 +308,38 @@ $ akm configure foo
 
 ## Clear
 
-Clear the environment variable of AWS credentials.
+```console
+$ akm clear --help
+
+Name:
+  akm clear - Delete the environment variable of AWS credentials.
+
+Usage:
+  akm clear
+
+Aliases:
+  clear, C
+
+Examples:
+  $ akm clear
+  unset AWS_ACCESS_KEY_ID;unset AWS_SECRET_ACCESS_KEY;unset AWS_DEFAULT_REGION;
+
+  Delete environment variable with eval.
+  $ env | grep AWS
+  AWS_ACCESS_KEY_ID=xxxxxxx
+  AWS_SECRET_ACCESS_KEY=xxxxxxx
+  AWS_DEFAULT_REGION=us-east-1
+
+  $ eval $(akm clear)
+
+  $ env | grep AWS
+  # empty
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example
 
 ```console
 $ env | grep AWS
@@ -206,7 +355,30 @@ $ env | grep AWS
 
 ## Delete
 
-Delete profile from AWS credentials file. When the profile is deleted, the credentials file is **overwritten**.
+```console
+$ akm delete --help
+
+Name:
+  akm delete - Delete profile from AWS credentials file.
+
+Usage:
+  akm delete PROFILE
+
+Aliases:
+  delete, del, d
+
+Description:
+  Delete profile from AWS credentials file.
+  When the profile is deleted, the credentials file is **overwritten**.
+
+Examples:
+  akm delete foo
+
+Global Flags:
+  -h, --help   Print help
+```
+
+For example:
 
 ```console
 $ akm delete foo
@@ -231,3 +403,8 @@ $ akm delete foo
 # License
 
 See [LICENSE](https://github.com/ohsawa0515/akm/blob/master/LICENSE).
+
+# Author
+
+Shuichi Ohsawa (@ohsawa0515)
+
