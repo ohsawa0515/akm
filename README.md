@@ -1,7 +1,7 @@
 AKM: Aws access Key Manager
 ===
 
-[![Build Status](https://travis-ci.org/ohsawa0515/akm.svg?branch=master)](https://travis-ci.org/ohsawa0515/akm)
+![Test Status](https://github.com/ohsawa0515/akm/actions/workflows/test.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ohsawa0515/akm)](https://goreportcard.com/report/github.com/ohsawa0515/akm)
 
 AKM is a simple AWS access Keys Manager.
