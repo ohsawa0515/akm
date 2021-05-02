@@ -16,17 +16,9 @@ Download it from [releases page](https://github.com/ohsawa0515/akm/releases) and
 
 ## Using Go
 
-If you have not installed [dep](https://github.com/golang/dep) yet, please install it.
-
-```console
-$ go get -u github.com/golang/dep/cmd/dep 
-```
-
 ```console
 $ go get -u github.com/ohsawa0515/akm
-$ dep ensure
 ```
-
 
 # Set AWS credentials
 
