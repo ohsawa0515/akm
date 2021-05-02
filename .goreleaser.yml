@@ -5,12 +5,18 @@ builds:
       - linux
     goarch:
       - amd64
+    ldflags:
+      - -s -w
+      - -X github.com/ohsawa0515/akm/app.Version={{.Version}}
+      - -X github.com/ohsawa0515/akm/app.Revision={{.ShortCommit}}
 archive:
+  name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
   format: tar.gz
-  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+  replacements:
+    darwin: darwin
+    linux: linux
+    amd64: x86_64
   files:
     - README.md
 release:
-  github:
-    owner: ohsawa0515
-    name: akm
+  prerelease: auto
