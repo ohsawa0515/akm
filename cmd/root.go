@@ -83,7 +83,7 @@ func addCommands(cmd *cobra.Command) {
 
 func showVersion() {
 	cliApp := app.NewCliApps()
-	fmt.Printf("akm version %s\n", cliApp.Version)
+	fmt.Printf("akm version %s, %s\n", cliApp.Version, cliApp.Revision)
 }
 
 func useLine(cmd *cobra.Command) string {
