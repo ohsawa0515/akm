@@ -1,3 +1,4 @@
+project_name: akm
 builds:
   - binary: akm
     goos:
@@ -9,14 +10,18 @@ builds:
       - -s -w
       - -X github.com/ohsawa0515/akm/app.Version={{.Version}}
       - -X github.com/ohsawa0515/akm/app.Revision={{.ShortCommit}}
-archive:
-  name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
-  format: tar.gz
-  replacements:
-    darwin: darwin
-    linux: linux
-    amd64: x86_64
-  files:
-    - README.md
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
 release:
   prerelease: auto
